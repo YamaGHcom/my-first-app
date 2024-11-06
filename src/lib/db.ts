@@ -38,7 +38,7 @@ async function getDatabase(): Promise<Db> {
 // コレクションを取得する関数
 export async function getCollection<T extends Document = Document>(collectionName: string): Promise<Collection<T>> {
     const db = await getDatabase();
-    return db.collection<T>(collectionName);
+    return db.collection<T>("username");
 }
 
 export default getDatabase;

@@ -31,6 +31,9 @@ export default function RootLayout({
       >
         <Header />
         {children}
+        <footer className="text-gray-400 text-center text-xs py-5">
+          <p>Copyright &copy;{new Date().getFullYear()} - All rights reserved.</p>
+        </footer>
       </body>
     </html>
   );
