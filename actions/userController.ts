@@ -1,10 +1,16 @@
 "use server"
 
-import { getCollection } from "../lib/db.ts"
+import { getCollection } from "../src/lib/db.js"
 import bcrypt from 'bcrypt'
 import { cookies } from 'next/headers'
 import jwt from 'jsonwebtoken'
 import { redirect } from "next/navigation"
+
+const secret = process.env.JWTSECRET;
+
+if (!secret) {
+    throw new Error("JWTSECRET is not defined in the environment variables.");
+}
 
 //文字列チェック
 function isAlphaNumeric(x: string) {
@@ -12,8 +18,8 @@ function isAlphaNumeric(x: string) {
     return regex.test(x);
 }
 
-//フォームオブジェクトの型指定？
-type User = {
+//フォームに入力されるデータのオブジェクトの型指定
+type User = Document & {
     username: string,
     password: string,
 }
@@ -33,7 +39,8 @@ export const login = async function (prevState: User, formData: User) {
     if (typeof ourUser.username != "string") ourUser.username = "";
     if (typeof ourUser.password != "string") ourUser.password = "";
 
-    const collection = await getCollection("users")
+    //データベースからUserコレクションを取ってきて、ユーザーネームが一致する人がいるかを確認
+    const collection = await getCollection<User>("users")
     const user = await collection.findOne({ username: ourUser.username })
 
     if (!user) {
@@ -48,7 +55,7 @@ export const login = async function (prevState: User, formData: User) {
 
     //create jwt value
     //JWTを作成
-    const ourTokenValue = jwt.sign({ skycolor: "blue", userId: user._id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 }, process.env.JWTSECRET)
+    const ourTokenValue = jwt.sign({ skycolor: "blue", userId: user._id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 }, secret)
 
     //log the user in by giving them a cookie
     //JWTをクッキーに保存
@@ -69,12 +76,20 @@ export const logout = async function () {
 }
 
 //登録機能
-export const register = async function (prevState, formData) {
-    const errors = {}
+export const register = async function (prevState: User, formData: User) {
+    //const errors = {}
+
+    type Errors = {
+        username?: string;
+        password?: string
+    };
+
+    const errors: Errors = {}
+
 
     const ourUser = {
-        username: formData.get("username"),
-        password: formData.get("password"),
+        username: formData.username,
+        password: formData.password,
     }
 
     if (typeof ourUser.username != "string") ourUser.username = "";
@@ -117,7 +132,7 @@ export const register = async function (prevState, formData) {
 
     //create our JWT value
     //JWTを作成
-    const ourTokenValue = jwt.sign({ skycolor: "blue", userId: userId, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 }, process.env.JWTSECRET)
+    const ourTokenValue = jwt.sign({ skycolor: "blue", userId: userId, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 }, secret)
 
     //log the user in by giving them a cookie
     //JWTをクッキーに保存
