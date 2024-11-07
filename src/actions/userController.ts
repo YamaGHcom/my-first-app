@@ -1,6 +1,6 @@
 "use server"
 
-import { getCollection } from "../src/lib/db.js"
+import { getCollection } from "../lib/db.js"
 import bcrypt from 'bcrypt'
 import { cookies } from 'next/headers'
 import jwt from 'jsonwebtoken'
@@ -55,7 +55,7 @@ export const login = async function (prevState: User, formData: User) {
 
     //create jwt value
     //JWTを作成
-    const ourTokenValue = jwt.sign({ skycolor: "blue", userId: user._id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 }, secret)
+    const ourTokenValue = jwt.sign({ userId: user._id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 }, secret)
 
     //log the user in by giving them a cookie
     //JWTをクッキーに保存
@@ -90,7 +90,7 @@ export const register = async function (prevState: User, formData: User) {
     const ourUser = {
         username: formData.username,
         password: formData.password,
-    }
+    } as User;
 
     if (typeof ourUser.username != "string") ourUser.username = "";
     if (typeof ourUser.password != "string") ourUser.password = "";
