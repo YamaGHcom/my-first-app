@@ -1,11 +1,20 @@
-import Image from "next/image";
-import Link from "next/link";
+import RegisterForm from "../components/RegisterForm"
+import { getUserFromCookie } from "../lib/getUser"
+import Dashboard from "../components/Dashboard.jsx"
 
-
-export default function Home() {
+export default async function Page() {
+  const user = await getUserFromCookie()
   return (
-    <div>
-      トップページだよ
-    </div>
-  );
+    <>
+      {user && <Dashboard user={user} />}
+      {!user && (
+        <>
+          <p className="text-center text-2xl text-gray-600 mb-5">Don&rsquo;t have an acoount?
+            <strong>Create One</strong>
+          </p>
+          <RegisterForm />
+        </>
+      )}
+    </>
+  )
 }
