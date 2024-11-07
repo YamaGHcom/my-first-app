@@ -80,7 +80,7 @@ export const createHaiku = async function (prevState, formData) {
     return redirect('/')
 }
 
-export const deleteHaiku = async function (formData) {
+export const deleteTask = async function (formData) {
     const user = await getUserFromCookie()
     if (!user) {
         return redirect('/');

@@ -16,8 +16,12 @@ type Props = {
     };
 };
 
-export default async function Dashboard(props: Props) {
-    const tasks = await getTasks(props.user.userId)
+// export default async function Dashboard(props) {
+//     const tasks = await getTasks(props.user.userId)
+
+export default async function Dashboard({ user }: Props) {
+    const userId = user.userId
+    const tasks = await getTasks(userId)
 
     return (
         <div>

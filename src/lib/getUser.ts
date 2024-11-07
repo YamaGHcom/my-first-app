@@ -1,13 +1,14 @@
 import jwt from 'jsonwebtoken'
 import { cookies } from "next/headers"
 
-export async function getUserFromCookie() {
+export function getUserFromCookie(): string | jwt.JwtPayload | null {
     const secret = process.env.JWTSECRET;
 
     if (!secret) {
         throw new Error("JWTSECRET is not defined in the environment variables.");
     }
     const theCookie = cookies().get("ourhaikuapp")?.value
+
     if (theCookie) {
         try {
             const decode = jwt.verify(theCookie, secret)
@@ -16,4 +17,8 @@ export async function getUserFromCookie() {
             return null
         }
     }
+
+    return null
 }
+
+//user={user as { userId: string }} に合うように戻り値の値を変更
