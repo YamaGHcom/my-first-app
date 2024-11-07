@@ -1,6 +1,6 @@
 import RegisterForm from "../components/RegisterForm"
 import { getUserFromCookie } from "../lib/getUser"
-import Dashboard from "../components/Dashboard.jsx"
+import Dashboard from "../components/Dashboard.tsx"
 
 export default async function Page() {
   const user = await getUserFromCookie()
