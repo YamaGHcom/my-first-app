@@ -14,40 +14,22 @@ async function sharedHaikuLogic(formData, user) {
     const errors = {}
 
     const ourHaiku = {
-        line1: formData.get("line1"),
-        line2: formData.get("line2"),
-        line3: formData.get("line3"),
+        task: formData.get("task"),
         author: ObjectId.createFromHexString(user.userId)
     }
 
-    if (typeof ourHaiku.line1 != "string") ourHaiku.line1 = ""
-    if (typeof ourHaiku.line2 != "string") ourHaiku.line2 = ""
-    if (typeof ourHaiku.line3 != "string") ourHaiku.line3 = ""
+    if (typeof ourHaiku.task != "string") ourHaiku.task = ""
 
-    ourHaiku.line1 = ourHaiku.line1.replace(/(\r\n|\n|\r)/g, " ")
-    ourHaiku.line2 = ourHaiku.line2.replace(/(\r\n|\n|\r)/g, " ")
-    ourHaiku.line3 = ourHaiku.line3.replace(/(\r\n|\n|\r)/g, " ")
+    ourHaiku.task = ourHaiku.task.replace(/(\r\n|\n|\r)/g, " ")
 
-    ourHaiku.line1 = ourHaiku.line1.trim()
-    ourHaiku.line2 = ourHaiku.line2.trim()
-    ourHaiku.line3 = ourHaiku.line3.trim()
+    ourHaiku.task = ourHaiku.task.trim()
 
-    if (ourHaiku.line1.length < 5) errors.line1 = "Too few syllables; must be 5."
-    if (ourHaiku.line1.length > 25) errors.line1 = "Too many syllables; must be 5."
+    if (ourHaiku.task.length < 5) errors.task = "Too few syllables; must be 5."
+    if (ourHaiku.task.length > 25) errors.task = "Too many syllables; must be 5."
 
-    if (ourHaiku.line2.length < 7) errors.line2 = "Too few syllables; must be 7."
-    if (ourHaiku.line2.length > 35) errors.line2 = "Too many syllables; must be 7."
+    if (!isAlphaNumericWithBasics(ourHaiku.task)) errors.task = "No special characters allowed"
 
-    if (ourHaiku.line3.length < 5) errors.line3 = "Too few syllables; must be 5."
-    if (ourHaiku.line3.length > 25) errors.line3 = "Too many syllables; must be 5."
-
-    if (!isAlphaNumericWithBasics(ourHaiku.line1)) errors.line1 = "No special characters allowed"
-    if (!isAlphaNumericWithBasics(ourHaiku.line2)) errors.line2 = "No special characters allowed"
-    if (!isAlphaNumericWithBasics(ourHaiku.line3)) errors.line3 = "No special characters allowed"
-
-    if (ourHaiku.line1.length == 0) errors.line1 = "This field is required."
-    if (ourHaiku.line2.length == 0) errors.line2 = "This field is required."
-    if (ourHaiku.line3.length == 0) errors.line3 = "This field is required."
+    if (ourHaiku.task.length == 0) errors.task = "This field is required."
 
     return {
         errors,
@@ -68,9 +50,9 @@ export const createHaiku = async function (prevState, formData) {
     const results = await sharedHaikuLogic(formData, user)
 
     if (count >= 3) {
-        return { errors: { line1: "ログイン試行回数の上限に達しました" } }
+        return { errors: { task: "ログイン試行回数の上限に達しました" } }
     }
-    if (results.errors.line1 || results.errors.line2 || results.errors.line3)
+    if (results.errors.task)
         return { errors: results.errors, count: count + 1 }
 
 
@@ -110,7 +92,7 @@ export const editHaiku = async function (prevState, formData) {
     }
     const results = await sharedHaikuLogic(formData, user)
 
-    if (results.errors.line1 || results.errors.line2 || results.errors.line3)
+    if (results.errors.task)
         return { errors: results.errors }
 
     //save into db
