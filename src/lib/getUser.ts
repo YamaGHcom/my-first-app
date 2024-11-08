@@ -25,5 +25,3 @@ export function getUserFromCookie() {
 
     return null
 }
-
-//user={user as { userId: string }} に合うように戻り値の値を変更

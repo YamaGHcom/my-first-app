@@ -5,13 +5,26 @@ import { getUserFromCookie } from "../lib/getUser"
 import { ObjectId } from "mongodb"
 import { getCollection } from "../lib/db"
 
-function isAlphaNumericWithBasics(text) {
+//タスクに使える文字指定
+function isAlphaNumericWithBasics(text: string) {
     const regax = /^[a-zA-Z0-9 .,]*$/
     return regax.test(text);
 }
 
-async function sharedHaikuLogic(formData, user) {
-    const errors = {}
+//ユーザーの型指定
+type User = {
+    userId: string;
+}
+
+//エラーの型指定
+type Errors = {
+    task?: string;
+}
+
+//入力されたタスクの文字制限や使用できる文字の種類をチェックするバリデーション関数
+async function sharedHaikuLogic(user: User, formData: FormData) {
+
+    const errors: Errors = {}
 
     const ourHaiku = {
         task: formData.get("task"),
@@ -24,8 +37,7 @@ async function sharedHaikuLogic(formData, user) {
 
     ourHaiku.task = ourHaiku.task.trim()
 
-    if (ourHaiku.task.length < 5) errors.task = "Too few syllables; must be 5."
-    if (ourHaiku.task.length > 25) errors.task = "Too many syllables; must be 5."
+    if (ourHaiku.task.length > 100) errors.task = "Task name is too long: up to 100 characters."
 
     if (!isAlphaNumericWithBasics(ourHaiku.task)) errors.task = "No special characters allowed"
 
@@ -33,14 +45,12 @@ async function sharedHaikuLogic(formData, user) {
 
     return {
         errors,
-        //errors:errors,
         ourHaiku
-        //ourHaiku:ourHaiku
     }
 }
 
 
-export const createHaiku = async function (prevState, formData) {
+export const createHaiku = async function (prevState, formData: ourHaiku) {
     const count = prevState.count
     console.log("prevState", prevState)
     const user = await getUserFromCookie()
