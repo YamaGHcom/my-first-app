@@ -22,105 +22,101 @@ type Errors = {
 }
 
 //入力されたタスクの文字制限や使用できる文字の種類をチェックするバリデーション関数
-async function sharedHaikuLogic(user: User, formData: FormData) {
+async function sharedTaskLogic(user: User, formData: FormData) {
 
     const errors: Errors = {}
 
-    const ourHaiku = {
+    const ourTask = {
         task: formData.get("task"),
         author: ObjectId.createFromHexString(user.userId)
     }
 
-    if (typeof ourHaiku.task != "string") ourHaiku.task = ""
+    if (typeof ourTask.task != "string") ourTask.task = ""
 
-    ourHaiku.task = ourHaiku.task.replace(/(\r\n|\n|\r)/g, " ")
+    ourTask.task = ourTask.task.replace(/(\r\n|\n|\r)/g, " ")
 
-    ourHaiku.task = ourHaiku.task.trim()
+    ourTask.task = ourTask.task.trim()
 
-    if (ourHaiku.task.length > 100) errors.task = "Task name is too long: up to 100 characters."
+    if (ourTask.task.length > 100) errors.task = "Task name is too long: up to 100 characters."
 
-    if (!isAlphaNumericWithBasics(ourHaiku.task)) errors.task = "No special characters allowed"
+    if (!isAlphaNumericWithBasics(ourTask.task)) errors.task = "No special characters allowed"
 
-    if (ourHaiku.task.length == 0) errors.task = "This field is required."
+    if (ourTask.task.length == 0) errors.task = "This field is required."
 
     return {
         errors,
-        ourHaiku
+        ourTask
     }
 }
 
+//タスクを作成する関数
+export const createTask = async function (prevState: { errors: Errors }, formData: FormData) {
+    const user = await getUserFromCookie();
 
-export const createHaiku = async function (prevState, formData: ourHaiku) {
-    const count = prevState.count
-    console.log("prevState", prevState)
-    const user = await getUserFromCookie()
     if (!user) {
         return redirect('/');
     }
-    const results = await sharedHaikuLogic(formData, user)
 
-    if (count >= 3) {
-        return { errors: { task: "ログイン試行回数の上限に達しました" } }
-    }
+    const results = await sharedTaskLogic(user, formData)
+
     if (results.errors.task)
-        return { errors: results.errors, count: count + 1 }
+        return { errors: results.errors }
 
-
-    //save into db
-    const haikusCollection = await getCollection("haikus")
-    const newHaiku = await haikusCollection.insertOne(results.ourHaiku)
+    //DBにタスクを保存
+    const tasksCollection = await getCollection("tasks")
+    await tasksCollection.insertOne(results.ourTask)
     return redirect('/')
 }
 
+//タスクを削除する関数
 export const deleteTask = async function (formData) {
     const user = await getUserFromCookie()
     if (!user) {
         return redirect('/');
     }
 
-    const haikusCollection = await getCollection("haikus")
-    let haikuId = formData.get("id")
-    if (typeof haikuId != "string") haikuId = ""
+    const tasksCollection = await getCollection("tasks")
+    let taskId = formData.get("id")
+    if (typeof taskId != "string") taskId = ""
 
     // make sure you are the other of this post, otherwise have operation failed 
-    const haikuInQuestion = await haikusCollection.findOne({ _id: ObjectId.createFromHexString(haikuId) })
-    if (haikuInQuestion.author.toString() !== user.userId) {
+    const taskInQuestion = await tasksCollection.findOne({ _id: ObjectId.createFromHexString(taskId) })
+    if (taskInQuestion.author.toString() !== user.userId) {
         return redirect('/')
     }
 
-    await haikusCollection.deleteOne({ _id: ObjectId.createFromHexString(haikuId) })
+    await tasksCollection.deleteOne({ _id: ObjectId.createFromHexString(taskId) })
 
     return redirect('/')
 }
 
-
-
-export const editHaiku = async function (prevState, formData) {
+//タスクを編集する関数
+export const editTask = async function (prevState, formData) {
     const user = await getUserFromCookie()
     if (!user) {
         return redirect('/');
     }
-    const results = await sharedHaikuLogic(formData, user)
+    const results = await sharedTaskLogic(formData, user)
 
     if (results.errors.task)
         return { errors: results.errors }
 
     //save into db
-    const haikusCollection = await getCollection("haikus")
-    let haikuId = formData.get("haikuId")
+    const tasksCollection = await getCollection("tasks")
+    let taskId = formData.get("taskId")
 
-    // console.log("-------------------", haikuId);
-    // console.log(haikuId.length);
+    // console.log("-------------------", taskId);
+    // console.log(taskId.length);
 
-    if (typeof haikuId != "string") haikuId = ""
+    if (typeof taskId != "string") taskId = ""
 
     // make sure you are the other of this post, otherwise have operation failed 
-    const haikuInQuestion = await haikusCollection.findOne({ _id: ObjectId.createFromHexString(haikuId) })
-    if (haikuInQuestion.author.toString() !== user.userId) {
+    const taskInQuestion = await tasksCollection.findOne({ _id: ObjectId.createFromHexString(taskId) })
+    if (taskInQuestion.author.toString() !== user.userId) {
         return redirect('/')
     }
 
-    await haikusCollection.findOneAndUpdate({ _id: ObjectId.createFromHexString(haikuId) }, { $set: results.ourHaiku })
+    await tasksCollection.findOneAndUpdate({ _id: ObjectId.createFromHexString(taskId) }, { $set: results.ourTask })
 
 
     return redirect('/')

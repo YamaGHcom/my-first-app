@@ -1,17 +1,17 @@
 "use client"
 
 import { useFormState } from 'react-dom'
-import { createHaiku, editHaiku } from '../actions/taskController';
+import { createTask, editTask } from '../actions/taskController';
 
-export default function HaikuForm(props) {
+export default function TaskForm(props) {
     let actualAction
 
     if (props.action === "create") {
-        actualAction = createHaiku
+        actualAction = createTask
     }
 
     if (props.action === "edit") {
-        actualAction = editHaiku
+        actualAction = editTask
     }
 
     const [formState, formAction] = useFormState(actualAction, { count: 0 });
@@ -19,7 +19,7 @@ export default function HaikuForm(props) {
     return (
         <form action={formAction} className="max-w-xs mx-auto">
             <div className="mb-3">
-                <input name="line1" defaultValue={props.haiku?.line1} autoComplete="off" type="text" placeholder="line #1" className="input input-bordered w-full max-w-xs" />
+                <input name="line1" defaultValue={props.task?.line1} autoComplete="off" type="text" placeholder="line #1" className="input input-bordered w-full max-w-xs" />
                 {formState.errors?.task && (
                     <div role="alert" className="alert alert-warning">
                         <svg
@@ -37,7 +37,7 @@ export default function HaikuForm(props) {
                     </div>
                 )}
             </div>
-            <input type="hidden" name="haikuId" defaultValue={props.haiku?._id.toString()} />
+            <input type="hidden" name="taskId" defaultValue={props.task?._id.toString()} />
             <button className='btn btn-secondary'>Submit</button>
         </form>
     )
