@@ -7,7 +7,7 @@ export function getUserFromCookie(): string | jwt.JwtPayload | null {
     if (!secret) {
         throw new Error("JWTSECRET is not defined in the environment variables.");
     }
-    const theCookie = cookies().get("ourhaikuapp")?.value
+    const theCookie = cookies().get("ourtodoapp")?.value
 
     if (theCookie) {
         try {

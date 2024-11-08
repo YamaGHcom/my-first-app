@@ -3,7 +3,7 @@ import { MongoClient, Db, Collection } from "mongodb";
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
-// 環境変数からMongoDB URIを取得し、型チェックを行います
+// 環境変数からMongoDB URIを取得し、型チェック
 if (!process.env.CONNECTIONSTRING) {
     throw new Error("Please add your MongoDB URI to the .env file");
 }
