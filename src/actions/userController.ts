@@ -31,7 +31,7 @@ export const login = async function (formData: FormData) {
     const ourUser = {
         username: formData.get("username"),
         password: formData.get("password"),
-    }
+    };
 
     if (typeof ourUser.username != "string") ourUser.username = "";
     if (typeof ourUser.password != "string") ourUser.password = "";
@@ -70,12 +70,13 @@ export const logout = async function () {
     redirect("/")
 }
 
+type Errors = {
+    username?: string;
+    password?: string;
+}
+
 //登録機能/////////////////////////////////////////////////////////////////////////////
-export const register = async function (formData: FormData) {
-    type Errors = {
-        username?: string;
-        password?: string;
-    }
+export const register = async function (prevState: { errors: Errors, success: boolean }, formData: FormData) {
 
     const errors: Errors = {}
 

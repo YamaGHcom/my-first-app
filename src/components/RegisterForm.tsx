@@ -3,7 +3,7 @@ import { useFormState } from 'react-dom'
 import { register } from '../actions/userController'
 
 export default function RegisterForm() {
-    const [formState, formAction] = useFormState(register, {});
+    const [formState, formAction] = useFormState(register, { errors: {}, success: false });
 
     console.log(formState)
 

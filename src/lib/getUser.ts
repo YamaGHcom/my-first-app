@@ -1,7 +1,9 @@
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { cookies } from "next/headers"
 
-export function getUserFromCookie(): string | jwt.JwtPayload | null {
+// type UserFromCookie = { userId: string } | null
+
+export function getUserFromCookie() {
     const secret = process.env.JWTSECRET;
 
     if (!secret) {
@@ -11,8 +13,11 @@ export function getUserFromCookie(): string | jwt.JwtPayload | null {
 
     if (theCookie) {
         try {
-            const decode = jwt.verify(theCookie, secret)
-            return decode
+            const decode = jwt.verify(theCookie, secret) as JwtPayload
+            console.log("decodeの値", decode);
+            console.log("decodeのuserIdの値",);
+            return { userId: decode.userId }
+
         } catch (err) {
             return null
         }
