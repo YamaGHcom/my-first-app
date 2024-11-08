@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 import { cookies } from 'next/headers'
 import jwt from 'jsonwebtoken'
 import { redirect } from "next/navigation"
-import { ObjectId } from "mongodb";  // ObjectIdをmongodbからインポート
+
 
 //JWTSECRETが設定されているかを確認してなければエラーを投げる
 const secret = process.env.JWTSECRET;
@@ -20,29 +20,24 @@ function isAlphaNumeric(x: string) {
     return regex.test(x);
 }
 
-//フォームに入力されるデータのオブジェクトの型指定
-type User = Document & {
-    username: string,
-    password: string,
-}
-
-//ログイン機能
-export const login = async function (formData: User) {
+//ログイン機能/////////////////////////////////////////////////////////////////////////////
+export const login = async function (formData: FormData) {
     const failObject = {
         success: false,
         message: "Invalid username / password."
     }
 
+    //フォームに入力されたユーザーネームとパスワードを取得
     const ourUser = {
-        username: formData.username,
-        password: formData.password,
+        username: formData.get("username"),
+        password: formData.get("password"),
     }
 
     if (typeof ourUser.username != "string") ourUser.username = "";
     if (typeof ourUser.password != "string") ourUser.password = "";
 
     //データベースからUserコレクションを取ってきて、ユーザーネームが一致する人がいるかを確認
-    const collection = await getCollection<User>("users")
+    const collection = await getCollection("users")
     const user = await collection.findOne({ username: ourUser.username })
 
     if (!user) {
@@ -69,14 +64,14 @@ export const login = async function (formData: User) {
     return redirect("/")
 }
 
-//ログアウト機能
+//ログアウト機能/////////////////////////////////////////////////////////////////////////////
 export const logout = async function () {
     cookies().delete("ourtodoapp")
     redirect("/")
 }
 
-//登録機能
-export const register = async function (formData: User) {
+//登録機能/////////////////////////////////////////////////////////////////////////////
+export const register = async function (formData: FormData) {
     type Errors = {
         username?: string;
         password?: string;
@@ -84,11 +79,10 @@ export const register = async function (formData: User) {
 
     const errors: Errors = {}
 
-
     const ourUser = {
-        username: formData.username,
-        password: formData.password,
-    } as User;
+        username: formData.get("username"),
+        password: formData.get("password"),
+    }
 
     if (typeof ourUser.username != "string") ourUser.username = "";
     if (typeof ourUser.password != "string") ourUser.password = "";
@@ -102,7 +96,7 @@ export const register = async function (formData: User) {
     if (ourUser.username == "") errors.username = "You must provide a username."
 
     //既に同じユーザーネームが登録されているかの確認
-    const usersCollection = await getCollection<User>("users")
+    const usersCollection = await getCollection("users")
     const usernameInQestion = await usersCollection.findOne({ username: ourUser.username })
 
     if (usernameInQestion) { errors.username = "That username is already in use." }
