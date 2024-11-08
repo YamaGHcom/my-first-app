@@ -76,8 +76,7 @@ export const logout = async function () {
 }
 
 //登録機能
-export const register = async function (prevState: User, formData: User) {
-    //const errors = {}
+export const register = async function (formData: User) {
 
     type Errors = {
         username?: string;
@@ -144,6 +143,7 @@ export const register = async function (prevState: User, formData: User) {
     })
 
     return {
+        errors: errors,
         success: true
     }
 
