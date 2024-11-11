@@ -27,7 +27,7 @@ export default function TaskForm(props: TaskFormProps) {
     return (
         <form action={formAction} className="max-w-xs mx-auto">
             <div className="mb-3">
-                <input name="line1" defaultValue={props.task?.task} autoComplete="off" type="text" placeholder="line #1" className="input input-bordered w-full max-w-xs" />
+                <input name="task" defaultValue={props.task?.task} autoComplete="off" type="text" placeholder="fill in the task" className="input input-bordered w-full max-w-xs" />
                 {formState.errors?.task && (
                     <div role="alert" className="alert alert-warning">
                         <svg
