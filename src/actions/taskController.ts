@@ -106,7 +106,7 @@ export const editTask = async function (prevState: { errors: Errors }, formData:
 
     if (typeof taskId != "string") taskId = ""
 
-    // 削除しようとしているタスクの作者と削除しようとしている人が一致するかの確認
+    // 編集しているタスクの作者と削除しようとしている人が一致するかの確認
     const taskInQuestion = await tasksCollection.findOne({ _id: ObjectId.createFromHexString(taskId) })
     if (taskInQuestion?.author.toString() !== user.userId) {
         return redirect('/')
