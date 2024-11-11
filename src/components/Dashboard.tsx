@@ -29,7 +29,7 @@ export default async function Dashboard({ user }: Props) {
             {tasks.map((task, index) => {
                 return (
                     <div key={index}>
-                        task: {task.task}
+                        <span className="text-red-500">{task.task}</span>
                         <br />
                         <Link href={`/edit-task/${task._id.toString()}`}>Edit</Link>
                         <form action={deleteTask}>

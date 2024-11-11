@@ -21,7 +21,7 @@ function isAlphaNumeric(x: string) {
 }
 
 //ログイン機能/////////////////////////////////////////////////////////////////////////////
-export const login = async function (formData: FormData) {
+export const login = async function (prevState: { success: boolean, message: string }, formData: FormData) {
     const failObject = {
         success: false,
         message: "Invalid username / password."

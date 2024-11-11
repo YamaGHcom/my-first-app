@@ -28,7 +28,7 @@ export default async function Header() {
                         )}
                         {!user && (
                             <li>
-                                <Link href="/">Log In</Link>
+                                <Link href="/login">Log In</Link>
                             </li>
                         )}
                     </ul>
