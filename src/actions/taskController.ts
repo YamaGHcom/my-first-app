@@ -69,7 +69,7 @@ export const createTask = async function (prevState: { errors: Errors }, formDat
 }
 
 //タスクを削除する関数
-export const deleteTask = async function (formData) {
+export const deleteTask = async function (formData: FormData) {
     const user = await getUserFromCookie()
     if (!user) {
         return redirect('/');
@@ -79,9 +79,9 @@ export const deleteTask = async function (formData) {
     let taskId = formData.get("id")
     if (typeof taskId != "string") taskId = ""
 
-    // make sure you are the other of this post, otherwise have operation failed 
+    // 削除しようとしているタスクの作者と削除しようとしている人が一致するかの確認
     const taskInQuestion = await tasksCollection.findOne({ _id: ObjectId.createFromHexString(taskId) })
-    if (taskInQuestion.author.toString() !== user.userId) {
+    if (taskInQuestion && taskInQuestion.author.toString() !== user.userId) {
         return redirect('/')
     }
 
