@@ -12,17 +12,17 @@ type TaskFormProps = {
 }
 
 export default function TaskForm(props: TaskFormProps) {
-    let actualAction
+    let actualAction: typeof createTask | typeof editTask;
 
     if (props.action === "create") {
-        actualAction = createTask
+        actualAction = createTask;
+    } else if (props.action === "edit") {
+        actualAction = editTask;
+    } else {
+        throw new Error("Invalid action type");
     }
 
-    if (props.action === "edit") {
-        actualAction = editTask
-    }
-
-    const [formState, formAction] = useFormState(actualAction, { count: 0 });
+    const [formState, formAction] = useFormState(actualAction, { errors: {} });
 
     return (
         <form action={formAction} className="max-w-xs mx-auto">

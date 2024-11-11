@@ -15,7 +15,7 @@ export function getUserFromCookie() {
         try {
             const decode = jwt.verify(theCookie, secret) as JwtPayload
             console.log("decodeの値", decode);
-            console.log("decodeのuserIdの値",);
+            // console.log("decodeのuserIdの値",);
             return { userId: decode.userId }
 
         } catch (err) {
