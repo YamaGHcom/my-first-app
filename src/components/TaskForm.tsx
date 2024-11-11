@@ -3,7 +3,15 @@
 import { useFormState } from 'react-dom'
 import { createTask, editTask } from '../actions/taskController';
 
-export default function TaskForm(props) {
+type TaskFormProps = {
+    action: "create" | "edit";
+    task?: {
+        _id: string;
+        task: string
+    }
+}
+
+export default function TaskForm(props: TaskFormProps) {
     let actualAction
 
     if (props.action === "create") {
@@ -19,7 +27,7 @@ export default function TaskForm(props) {
     return (
         <form action={formAction} className="max-w-xs mx-auto">
             <div className="mb-3">
-                <input name="line1" defaultValue={props.task?.line1} autoComplete="off" type="text" placeholder="line #1" className="input input-bordered w-full max-w-xs" />
+                <input name="line1" defaultValue={props.task?.task} autoComplete="off" type="text" placeholder="line #1" className="input input-bordered w-full max-w-xs" />
                 {formState.errors?.task && (
                     <div role="alert" className="alert alert-warning">
                         <svg

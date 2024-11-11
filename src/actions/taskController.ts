@@ -81,7 +81,7 @@ export const deleteTask = async function (formData: FormData) {
 
     // 削除しようとしているタスクの作者と削除しようとしている人が一致するかの確認
     const taskInQuestion = await tasksCollection.findOne({ _id: ObjectId.createFromHexString(taskId) })
-    if (taskInQuestion && taskInQuestion.author.toString() !== user.userId) {
+    if (taskInQuestion?.author.toString() !== user.userId) {
         return redirect('/')
     }
 
@@ -91,28 +91,24 @@ export const deleteTask = async function (formData: FormData) {
 }
 
 //タスクを編集する関数
-export const editTask = async function (prevState, formData) {
+export const editTask = async function (prevState: { errors: Errors }, formData: FormData) {
     const user = await getUserFromCookie()
     if (!user) {
         return redirect('/');
     }
-    const results = await sharedTaskLogic(formData, user)
+    const results = await sharedTaskLogic(user, formData)
 
     if (results.errors.task)
         return { errors: results.errors }
 
-    //save into db
     const tasksCollection = await getCollection("tasks")
     let taskId = formData.get("taskId")
 
-    // console.log("-------------------", taskId);
-    // console.log(taskId.length);
-
     if (typeof taskId != "string") taskId = ""
 
-    // make sure you are the other of this post, otherwise have operation failed 
+    // 削除しようとしているタスクの作者と削除しようとしている人が一致するかの確認
     const taskInQuestion = await tasksCollection.findOne({ _id: ObjectId.createFromHexString(taskId) })
-    if (taskInQuestion.author.toString() !== user.userId) {
+    if (taskInQuestion?.author.toString() !== user.userId) {
         return redirect('/')
     }
 
