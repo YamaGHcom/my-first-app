@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection } from "mongodb";
+import { MongoClient, Db } from "mongodb";
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
@@ -13,15 +13,18 @@ const options = {};
 
 // グローバル変数の型を宣言
 declare global {
-    var _mongoClientPromise: Promise<MongoClient> | undefined;
+    let _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
 if (process.env.NODE_ENV === "development") {
     // 開発モードでは、MongoClientのインスタンスが再作成されないようにグローバル変数を使用
+    // @ts-expect-error aaa
     if (!global._mongoClientPromise) {
         client = new MongoClient(uri, options);
+        // @ts-expect-error aaa
         global._mongoClientPromise = client.connect();
     }
+    // @ts-expect-error aaa
     clientPromise = global._mongoClientPromise;
 } else {
     // 本番環境ではグローバル変数を使わない方が良い

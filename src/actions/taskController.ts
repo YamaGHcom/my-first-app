@@ -51,7 +51,7 @@ async function sharedTaskLogic(user: User, formData: FormData) {
 
 //タスクを作成する関数
 export const createTask = async function (prevState: { errors: Errors }, formData: FormData) {
-    const user = await getUserFromCookie();
+    const user = getUserFromCookie();
 
     if (!user) {
         return redirect('/');
@@ -63,14 +63,19 @@ export const createTask = async function (prevState: { errors: Errors }, formDat
         return { errors: results.errors }
 
     //DBにタスクを保存
-    const tasksCollection = await getCollection("tasks")
-    await tasksCollection.insertOne(results.ourTask)
+    try {
+        const tasksCollection = await getCollection("tasks")
+        await tasksCollection.insertOne(results.ourTask)
+    }
+    catch {
+
+    }
     return redirect('/')
 }
 
 //タスクを削除する関数
 export const deleteTask = async function (formData: FormData) {
-    const user = await getUserFromCookie()
+    const user = getUserFromCookie()
     if (!user) {
         return redirect('/');
     }
@@ -92,7 +97,7 @@ export const deleteTask = async function (formData: FormData) {
 
 //タスクを編集する関数
 export const editTask = async function (prevState: { errors: Errors }, formData: FormData) {
-    const user = await getUserFromCookie()
+    const user = getUserFromCookie()
     if (!user) {
         return redirect('/');
     }

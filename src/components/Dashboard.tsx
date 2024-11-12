@@ -24,10 +24,6 @@ export default async function Dashboard({ user }: Props) {
         <div>
             <h2 className="text-center text-2xl text-gray-600 mb-5">Your Tasks</h2>
             {tasks.map((task, index) => {
-
-                const editLink = `/edit-task/${task._id.toString()}`;
-                console.log("Editリンク:", editLink);
-
                 return (
                     <div key={index}>
                         <span className="text-red-500">{task.task}</span>

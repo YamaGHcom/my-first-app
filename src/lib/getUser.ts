@@ -18,7 +18,7 @@ export function getUserFromCookie() {
             // console.log("decodeのuserIdの値",);
             return { userId: decode.userId }
 
-        } catch (err) {
+        } catch {
             return null
         }
     }
